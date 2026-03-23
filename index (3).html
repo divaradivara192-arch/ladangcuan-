@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Auto Cuan</title>
+
+<style>
+body {
+  margin: 0;
+  font-family: Arial;
+  background: radial-gradient(circle, #020617, #000);
+  color: white;
+  text-align: center;
+  overflow: hidden;
+}
+
+.container {
+  max-width: 400px;
+  margin: auto;
+  padding: 20px;
+  position: relative;
+  z-index: 2;
+}
+
+.btn {
+  display: block;
+  margin: 15px 0;
+  padding: 15px;
+  border-radius: 15px;
+  text-decoration: none;
+  color: white;
+  font-size: 18px;
+  background: #1e293b;
+  box-shadow: 0 0 15px #00ff88;
+}
+
+.box {
+  border: 2px solid #00ff88;
+  border-radius: 15px;
+  padding: 15px;
+  margin-top: 20px;
+  text-align: left;
+}
+
+h2 {
+  color: #00ff88;
+  text-align: center;
+}
+
+input {
+  width: 90%;
+  padding: 10px;
+  border-radius: 10px;
+  border: none;
+}
+
+button {
+  margin-top: 10px;
+  padding: 10px;
+  border-radius: 10px;
+  border: none;
+  background: #00ff88;
+  color: black;
+  font-weight: bold;
+}
+
+/* UANG JATUH */
+.money {
+  position: fixed;
+  top: -50px;
+  font-size: 24px;
+  animation: fall linear infinite;
+}
+@keyframes fall {
+  to { transform: translateY(110vh); }
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+  <h3>💸 Cara mudah hasilkan uang hanya dari chat!</h3>
+
+  <p id="jam"></p>
+  <p id="status"></p>
+
+  <p>👥 <span id="user">10533</span> orang sudah bergabung</p>
+
+  <a href="https://gabungwa.com/signup?ref=71847" class="btn">🚀 Daftar</a>
+  <a href="https://whatsapp.com/channel/0029VbC1MHP1t90bIcMBrQ14" class="btn">📢 Join Channel</a>
+
+  <!-- CUACA -->
+  <div class="box">
+    <h2>🌍 CEK CUACA</h2>
+    <input type="text" id="kota" placeholder="Contoh: Jakarta, Tokyo, London">
+    <br>
+    <button onclick="getCuaca()">Cari Cuaca</button>
+    <p id="hasilCuaca"></p>
+  </div>
+
+  <!-- KEUNTUNGAN -->
+  <div class="box">
+    <h2>🔥 KEUNTUNGAN 🔥</h2>
+    <p>✔ Aman dari scam</p>
+    <p>✔ 1 chat tetap dibayar</p>
+    <p>✔ WD cepat</p>
+    <p>✔ Bisa ajak teman & dapat komisi</p>
+    <p>✔ Sistem 24 jam aktif</p>
+  </div>
+
+</div>
+
+<script>
+// JAM
+function updateJam() {
+  const now = new Date();
+  const wita = new Date(now.getTime() + 3600000);
+  const wit = new Date(now.getTime() + 7200000);
+
+  function f(t){return t.toLocaleTimeString('id-ID');}
+
+  document.getElementById("jam").innerHTML =
+    "🕒 WIB: " + f(now) + " | WITA: " + f(wita) + " | WIT: " + f(wit);
+
+  let jam = now.getHours();
+  document.getElementById("status").innerHTML =
+    (jam>=6 && jam<18) ? "☀️ Siang" : "🌙 Malam";
+}
+setInterval(updateJam,1000);
+updateJam();
+
+// FAKE USER
+let user = 10533;
+setInterval(()=>{
+  user += Math.floor(Math.random()*5)+1;
+  document.getElementById("user").innerText = user.toLocaleString("id-ID");
+},3000);
+
+// UANG JATUH
+function createMoney(){
+  const m = document.createElement("div");
+  m.className="money";
+  m.innerHTML="💸";
+  m.style.left=Math.random()*100+"vw";
+  m.style.animationDuration=(Math.random()*3+3)+"s";
+  document.body.appendChild(m);
+  setTimeout(()=>m.remove(),6000);
+}
+setInterval(createMoney,300);
+
+// CUACA
+async function getCuaca(){
+  const kota = document.getElementById("kota").value.trim();
+  if(!kota){alert("Masukkan kota!");return;}
+
+  document.getElementById("hasilCuaca").innerHTML="⏳ Mencari...";
+
+  try{
+    const res = await fetch(`https://wttr.in/${kota}?format=j1`);
+    const data = await res.json();
+    const c = data.current_condition[0];
+
+    document.getElementById("hasilCuaca").innerHTML =
+      `📍 ${kota}<br>
+       🌡 ${c.temp_C}°C<br>
+       ☁ ${c.weatherDesc[0].value}<br>
+       💨 Angin: ${c.windspeedKmph} km/jam`;
+
+  }catch{
+    document.getElementById("hasilCuaca").innerHTML="❌ Gagal ambil cuaca";
+  }
+}
+</script>
+
+</body>
+</html>
